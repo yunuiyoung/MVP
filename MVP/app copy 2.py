@@ -287,23 +287,18 @@ if __name__ == "__main__":
             df = pd.DataFrame([
                 {"개발 파트": part, **cats} for part, cats in table_dict.items()
             ])
-            # "요금제" 열만 남기고, "부가상품", "프로모션" 열은 제거
-            df = df[["개발 파트", "요금제"]]
-
             # 모든 열이 빈 값("")인 행(총공수 제외)은 제거
             df = df.loc[~((df.drop(columns=["개발 파트"]) == "").all(axis=1))]
 
             # 4. 총공수 계산
-            total_row = {"개발 파트": "총공수", "요금제": ""}
-            s = [int(table_dict[part]["요금제"].replace(" MM", "")) for part in all_parts if table_dict[part]["요금제"]]
-            total_row["요금제"] = f"{sum(s)} MM" if s else ""
+            total_row = {"개발 파트": "총공수"}
+            for cat in category_map.values():
+                s = [int(table_dict[part][cat].replace(" MM", "")) for part in all_parts if table_dict[part][cat]]
+                total_row[cat] = f"{sum(s)} MM" if s else ""
             df = pd.concat([df, pd.DataFrame([total_row])], ignore_index=True)
 
             st.table(df)
             st.markdown(f"**공수 예측 근거:**\n\n{predicted['reason']}")
         else:
             st.error("공수를 예측할 수 없습니다. 다시 시도해주세요.")
-
-
-
 

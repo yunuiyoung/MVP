@@ -128,17 +128,11 @@ def estimate_development_effort(new_project_description: str):
     ---
     
     **요청 사항:**
-    1.  위 정보를 바탕으로, 다음 개발 파트들의 공수(MM)를 예측해주세요
+    1.  위 정보를 바탕으로, 다음 개발 파트들의 공수(MM)를 예측해주세요: 프론트엔드, 백엔드, QA, 디자인, 기획.
     2. 공수 예측에 대한 이유도 근거를 들어서 논리적으로 작성해야하고, 이를 'reason' 에 표시해야한다.
-    3. 각 파트별 공수(MM)는 반드시 아래의 key 이름만 사용하여 정수 값으로 예측해주세요.  
-- 요금제: KOS_Order_MM, KOS_Con_MM, APILink_MM, Bill_MM, APP_MM, MEIN_MM  
-- 부가상품: Addon_KOS_Order_MM, Addon_KOS_Con_MM, Addon_APILink_MM, Addon_Bill_MM, Addon_APP_MM, Addon_MEIN_MM  
-- 프로모션: Promo_KOS_Order_MM, Promo_KOS_Con_MM, Promo_APILink_MM, Promo_Bill_MM, Promo_APP_MM, Promo_MEIN_MM  
-예측 결과에 해당 유형이 없으면 해당 key는 0으로 출력하세요.  
-**절대로 다른 key 이름을 사용하지 마세요.**
-    4. 예측 결과는 JSON 형식으로만 출력해주세요. 다른 설명은 일절 포함하지 마세요.
-    5.  각 파트별 공수(MM)는 정수 값으로 예측해주세요.
-    6.  JSON 형식은 다음과 같아야 합니다:
+    2.  각 파트별 공수(MM)는 정수 값으로 예측해주세요.
+    3.  예측 결과는 JSON 형식으로만 출력해주세요. 다른 설명은 일절 포함하지 마세요.
+    4.  JSON 형식은 다음과 같아야 합니다:
         ```json
         {{
             "KOS_Order_MM": <예측 MM>,
@@ -147,18 +141,6 @@ def estimate_development_effort(new_project_description: str):
             "Bill_MM": <예측 MM>,
             "APP_MM": <예측 MM>,
             "MEIN_MM": <예측 MM>,
-            "Addon_KOS_Order_MM": <예측 MM>,
-            "Addon_KOS_Con_MM": <예측 MM>,
-            "Addon_APILink_MM": <예측 MM>,
-            "Addon_Bill_MM": <예측 MM>,
-            "Addon_APP_MM": <예측 MM>,
-            "Addon_MEIN_MM": <예측 MM>,
-            "Promo_KOS_Order_MM": <예측 MM>,
-            "Promo_KOS_Con_MM": <예측 MM>,
-            "Promo_APILink_MM": <예측 MM>,
-            "Promo_Bill_MM": <예측 MM>,
-            "Promo_APP_MM": <예측 MM>,
-            "Promo_MEIN_MM": <예측 MM>,
             "reason": <예측 근거>
         }}
         ```
@@ -169,18 +151,6 @@ def estimate_development_effort(new_project_description: str):
     try:
         INSTRUCTION = """\
 너는 개발 공수 측정에 대한 전문가야. 개발 공수 관련해서 논리적인 사고를 하면서 답변을 줘야해
-데이터 해석은 아래를 참고해줘
-
-### 개발공수 데이터 해석
-    KOS_Order_MM:유선오더통합팀에서 담당하고, 처음 요금제 관련 요구사항이 확정이되면, 청약을 위한 조건, 관련 UI개발, 기존 요금제와의 영향도 등에 따라 개발 필요하고 외부 API 연동이나 관련 시스템 들과의 연동을 위한 기본 데이터 생성등도 고려하는 개발 공수 
-    KOS_Con_MM:무선고객개발팀에서 담당하고, 외부 API 연동이 있을때 관련 In/Out 데이터정의, 기존데이터와의 연동, 기존 요금제와의 영향도 등을 고려하는 개발공수
-    APILink_MM: 결제플랫폼팀에서 담당하고, 외부  API  연동이 있을때 관련 In/Out 데이터정의, 기존데이터와의 연동 등을 고려하는 개발공수
-    Bill_MM: 빌링개발팀에서 담당하고, 신규 요금제의 청구를 위한 요금항목 정의, 오더의 데이터를 기반하여 청구를 위한 데이터 생성, 할인이나 프로모션 등을 고려하여 최종 청구금액을 계산하는 개발공수
-    APP_MM: 오픈서비스개발팀에서 담당하고, 기존 마이페이지라는 kt의 대고객 앱서비스에 새로 생기는 신규 요금제 추가에 따른 UI 개발, kt고객이 외부 OTT사의 최초 가입 엑티베이션을 위한 link 제공 및 관련 기능 구현, 테스트 등을 포함하는 개발공수
-    MEIN_MM: 미디어채널개발팀에서 담당하고, 신규 요금제의 채널 권한을 제어하는 설계, 관련하여 KOS오더의 청약정보 연동 및 변경사항 연동 , 테스트 등을 포함하는 개발공수
-
-### 개발공수 산정 방법:
-
 """
         response = openai_client.chat.completions.create(
             model=llm_model_name,
@@ -194,7 +164,6 @@ def estimate_development_effort(new_project_description: str):
         llm_output = response.choices[0].message.content
         predicted_effort = json.loads(llm_output)
         print("🎉 공수 예측 완료!")
-        print("   예측 결과:\n", predicted_effort)
         return predicted_effort
 
     except json.JSONDecodeError as e:
@@ -220,90 +189,24 @@ def display_effort_table(predicted_effort):
     print("|-----------|----------------|")
     for part, effort in predicted_effort.items():
         if part != "reason":
-            part_name = part.replace("_MM", "")  # _MM 제거
-            print(f"| {part_name:<10} | {effort:<14} |")
+            print(f"| {part:<10} | {effort:<14} |")
     print("---------------------------------")
     print(f"공수 예측 근거\n : {predicted_effort['reason']}")
 
 
 # --- 프로그램 실행 ---
 if __name__ == "__main__":
-    import streamlit as st
-    import pandas as pd
-
-    st.set_page_config(page_title="KT IPTV 요금제 개발 공수 예측기", layout="centered")
-
-    st.title("KT IPTV 요금제 개발 공수 예측기")
-    st.write("신규 프로젝트 요건을 입력하면, 과거 유사 프로젝트 데이터를 기반으로 개발 공수를 예측합니다.")
-
-    project_req = st.text_area(
-        "신규 프로젝트 요건을 입력하세요.",
-        height=200,
-        value="""새로운 OTT 서비스 'Wrtn TV'를 IPTV 요금제에 추가 연동하는 프로젝트입니다.
+    # 예시 신규 프로젝트 요건 입력
+    new_project_req = """
+    새로운 OTT 서비스 'Wrtn TV'를 IPTV 요금제에 추가 연동하는 프로젝트입니다.
     주요 기능은 사용자 로그인 연동, 콘텐츠 탐색 (VOD 및 라이브 채널), 개인화 추천, 시청 이력 동기화입니다.
     기존 TVING 연동과 유사하지만, 새로운 OTT 플랫폼과의 연동이므로 초기 연동 작업이 더 필요할 수 있습니다.
-    특히, Wrtn TV의 독점 콘텐츠를 강조하는 UI/UX 개선이 중요합니다."""
-    )
+    특히, Wrtn TV의 독점 콘텐츠를 강조하는 UI/UX 개선이 중요합니다.
+    """
 
-    if st.button("공수 예측 실행"):
-        with st.spinner("공수 예측 중..."):
-            predicted = estimate_development_effort(project_req)
-        if predicted:
-            st.subheader("📊 예측된 개발 공수 (MM)")
+    # 개발 공수 예측 실행
+    estimated_mm = estimate_development_effort(new_project_req)
 
-            # 1. 예측 결과에서 파트명 동적 추출
-            category_map = {
-                "": "요금제",
-                "Addon_": "부가상품",
-                "Promo_": "프로모션"
-            }
-            # 예측 결과에서 모든 파트 추출 (reason 제외)
-            all_parts = []
-            for k in predicted.keys():
-                if k == "reason":
-                    continue
-                # 접두사 제거
-                for prefix in category_map.keys():
-                    if k.startswith(prefix):
-                        part = k[len(prefix):].replace("_MM", "")
-                        if part not in all_parts:
-                            all_parts.append(part)
-                        break
-
-            # 2. 데이터 분류
-            table_dict = {part: {cat: "" for cat in category_map.values()} for part in all_parts}
-            for k, v in predicted.items():
-                if k == "reason":
-                    continue
-                for prefix, cat in category_map.items():
-                    if k.startswith(prefix):
-                        part = k[len(prefix):].replace("_MM", "")
-                        if part in table_dict:
-                            # 0이면 표시하지 않음
-                            table_dict[part][cat] = f"{int(v)} MM" if int(v) != 0 else ""
-                        break
-
-            # 3. DataFrame 생성
-            df = pd.DataFrame([
-                {"개발 파트": part, **cats} for part, cats in table_dict.items()
-            ])
-            # "요금제" 열만 남기고, "부가상품", "프로모션" 열은 제거
-            df = df[["개발 파트", "요금제"]]
-
-            # 모든 열이 빈 값("")인 행(총공수 제외)은 제거
-            df = df.loc[~((df.drop(columns=["개발 파트"]) == "").all(axis=1))]
-
-            # 4. 총공수 계산
-            total_row = {"개발 파트": "총공수", "요금제": ""}
-            s = [int(table_dict[part]["요금제"].replace(" MM", "")) for part in all_parts if table_dict[part]["요금제"]]
-            total_row["요금제"] = f"{sum(s)} MM" if s else ""
-            df = pd.concat([df, pd.DataFrame([total_row])], ignore_index=True)
-
-            st.table(df)
-            st.markdown(f"**공수 예측 근거:**\n\n{predicted['reason']}")
-        else:
-            st.error("공수를 예측할 수 없습니다. 다시 시도해주세요.")
-
-
-
+    # 결과 출력
+    display_effort_table(estimated_mm)
 
