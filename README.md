@@ -21,5 +21,7 @@
   사용자의 입력 텍스트를 벡터로 변환하여 AI Search와 연동   
 
 
+## 🧭 시연   
+user29-web-awdpexgxemdvhtb4.koreacentral-01.azurewebsites.net
   
 
