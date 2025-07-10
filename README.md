@@ -6,7 +6,7 @@
 
 
 ## 🧭 아키텍쳐
-① Azure AI Search로 과거 유사 사례를 찾고,
+① Azure AI Search로 과거 유사 사례를 찾고,   
 ② Azure OpenAI GPT 모델로 공수를 예측하며,
 ③ Streamlit으로 사용자에게 결과를 시각적으로 보여주는 구조입니다.
 
